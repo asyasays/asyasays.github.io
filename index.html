@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Обратный отсчёт | Поделиться ссылкой</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b0c1e 0%, #1a1e3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(10, 14, 30, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 40px 30px;
+            max-width: 750px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #FFDEE9, #B5FFFC);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .event-name {
+            font-size: 1.4rem;
+            color: #ddd;
+            font-weight: 400;
+            margin-bottom: 30px;
+            word-break: break-word;
+        }
+
+        .timer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0 40px;
+        }
+
+        .time-block {
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 32px;
+            padding: 15px 12px;
+            min-width: 95px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.2s;
+        }
+
+        .time-number {
+            font-size: 3.8rem;
+            font-weight: 800;
+            font-family: monospace;
+            background: linear-gradient(to bottom, #fff, #a0c0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            line-height: 1;
+        }
+
+        .time-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            color: #b9c8ff;
+            margin-top: 8px;
+        }
+
+        .status {
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 15px;
+            background: #1f2546;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 10px auto;
+            color: #ffe6a7;
+            background: #2a2f55;
+        }
+
+        .controls {
+            margin-top: 35px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .date-picker {
+            display: flex;
+            gap: 10px;
+            background: #03061766;
+            padding: 8px 15px;
+            border-radius: 50px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        input, button {
+            padding: 12px 18px;
+            border-radius: 40px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input {
+            background: #f0f3ff;
+            color: #0a0e2e;
+            font-family: monospace;
+            cursor: text;
+        }
+
+        button {
+            background: #3d44b3;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background: #5c65d9;
+            transform: scale(0.96);
+        }
+
+        .share-link {
+            background: #1e2349;
+            padding: 12px 18px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            word-break: break-all;
+            cursor: pointer;
+            border: 1px solid #5c6bc0;
+        }
+
+        .share-link span {
+            color: #b9cdff;
+            max-width: 300px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2e2d57;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: #7c85b0;
+        }
+
+        @media (max-width: 550px) {
+            .time-number {
+                font-size: 2.4rem;
+            }
+            .time-block {
+                min-width: 70px;
+                padding: 10px 8px;
+            }
+            .container {
+                padding: 25px 18px;
+            }
+            .share-link span {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⏳ ОБРАТНЫЙ ОТСЧЁТ</h1>
+    <div class="event-name" id="eventNameDisplay">До события осталось</div>
+
+    <div class="timer">
+        <div class="time-block"><div class="time-number" id="days">00</div><div class="time-label">Дней</div></div>
+        <div class="time-block"><div class="time-number" id="hours">00</div><div class="time-label">Часов</div></div>
+        <div class="time-block"><div class="time-number" id="minutes">00</div><div class="time-label">Минут</div></div>
+        <div class="time-block"><div class="time-number" id="seconds">00</div><div class="time-label">Секунд</div></div>
+    </div>
+
+    <div id="statusMessage" class="status">⌛ Загрузка...</div>
+
+    <div class="controls">
+        <div class="date-picker">
+            <input type="datetime-local" id="targetDateInput" step="1">
+            <button id="setDateBtn">📅 Установить</button>
+        </div>
+        <div class="share-link" id="shareLinkBox">
+            🔗 <span id="shareUrlText">Ссылка для отправки</span>
+            <button id="copyLinkBtn" style="background:#0f1233; padding:6px 12px;">Копировать</button>
+        </div>
+    </div>
+    <footer>✏️ Установите дату — ссылка обновится автоматически. Поделитесь ей с другими!</footer>
+</div>
+<div id="copyToast" class="copy-toast">📋 Ссылка скопирована!</div>
+
+<script>
+    // -------- Конфигурация ---------
+    // По умолчанию дата: текущая дата + 7 дней (пример)
+    let targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 7);
+    targetDate.setHours(23, 59, 59, 0);  // к полуночи следующей недели
+
+    // Получить параметры из URL: ?to=YYYY-MM-DDTHH:MM:SS  или ?target=... (поддержка оба)
+    // Также можно добавить название события через &title=Текст
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        let dateStr = params.get('to') || params.get('target') || params.get('date');
+        const title = params.get('title') || params.get('event');
+        return { dateStr, title };
+    }
+
+    // Парсим дату из строки (ISO или локальный формат datetime-local)
+    function parseDateFromString(dateString) {
+        if (!dateString) return null;
+        // пробуем напрямую new Date (ISO)
+        let d = new Date(dateString);
+        if (!isNaN(d.getTime())) return d;
+        // альтернатива: если строка 'YYYY-MM-DDTHH:MM' (без секунд) — добавим секунды
+        if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dateString)) {
+            d = new Date(dateString + ":00");
+            if (!isNaN(d.getTime())) return d;
+        }
+        return null;
+    }
+
+    // обновление URL без перезагрузки, формируем новую ссылку для шаринга
+    function updateURLParameters() {
+        const url = new URL(window.location.href);
+        // задаём параметр to — используем текущий targetDate в ISO формате
+        if (targetDate && isValidDate(targetDate)) {
+            let isoString = targetDate.toISOString();
+            // убираем миллисекунды и 'Z' для читаемости, но можно оставить как есть
+            url.searchParams.set('to', isoString);
+            if (currentEventTitle && currentEventTitle.trim() !== "") {
+                url.searchParams.set('title', currentEventTitle);
+            } else {
+                url.searchParams.delete('title');
+            }
+        } else {
+            url.searchParams.delete('to');
+        }
+        // обновляем без перезагрузки (чтобы ссылка в браузере изменилась, но страница не перезагружалась)
+        window.history.replaceState({}, '', url.toString());
+        updateShareLinkDisplay();
+    }
+
+    let currentEventTitle = null;  // храним название события
+
+    // Отображение текста в ссылке
+    function updateShareLinkDisplay() {
+        const shareSpan = document.getElementById('shareUrlText');
+        if (shareSpan) {
+            shareSpan.innerText = window.location.href;
+        }
+    }
+
+    function isValidDate(d) {
+        return d instanceof Date && !isNaN(d.getTime());
+    }
+
+    // Обновление таймера и UI
+    function updateTimer() {
+        const now = new Date().getTime();
+        const targetTime = targetDate.getTime();
+        const diff = targetTime - now;
+
+        const daysElem = document.getElementById('days');
+        const hoursElem = document.getElementById('hours');
+        const minutesElem = document.getElementById('minutes');
+        const secondsElem = document.getElementById('seconds');
+        const statusElem = document.getElementById('statusMessage');
+
+        if (diff <= 0) {
+            // событие наступило или прошло
+            daysElem.innerText = '00';
+            hoursElem.innerText = '00';
+            minutesElem.innerText = '00';
+            secondsElem.innerText = '00';
+            statusElem.innerHTML = '✨ СОБЫТИЕ НАСТУПИЛО! ✨';
+            statusElem.style.background = "#8b3c6e";
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (86400000)) / (3600000));
+        const minutes = Math.floor((diff % 3600000) / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+
+        daysElem.innerText = days < 10 ? '0' + days : days;
+        hoursElem.innerText = hours < 10 ? '0' + hours : hours;
+        minutesElem.innerText = minutes < 10 ? '0' + minutes : minutes;
+        secondsElem.innerText = seconds < 10 ? '0' + seconds : seconds;
+        statusElem.innerHTML = '⏰ ИДЁТ ОБРАТНЫЙ ОТСЧЁТ ⏰';
+        statusElem.style.background = "#2a2f55";
+    }
+
+    // Установить новую дату и обновить ссылку/отображение
+    function setNewTargetDate(newDate, eventTitle = null) {
+        if (!isValidDate(newDate)) return false;
+        targetDate = new Date(newDate);
+        if (eventTitle !== undefined && eventTitle !== null) {
+            currentEventTitle = eventTitle;
+        }
+        // обновить название события в интерфейсе
+        const eventNameDiv = document.getElementById('eventNameDisplay');
+        if (currentEventTitle && currentEventTitle !== "") {
+            eventNameDiv.innerText = currentEventTitle;
+        } else {
+            eventNameDiv.innerText = "До события осталось";
+        }
+        // обновить datetime-local input
+        const inputElem = document.getElementById('targetDateInput');
+        if (inputElem && isValidDate(targetDate)) {
+            // формат для datetime-local: YYYY-MM-DDThh:mm:ss (убираем миллисекунды)
+            let year = targetDate.getFullYear();
+            let month = String(targetDate.getMonth() + 1).padStart(2,'0');
+            let day = String(targetDate.getDate()).padStart(2,'0');
+            let hours = String(targetDate.getHours()).padStart(2,'0');
+            let minutes = String(targetDate.getMinutes()).padStart(2,'0');
+            let seconds = String(targetDate.getSeconds()).padStart(2,'0');
+            inputElem.value = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        }
+        updateURLParameters();
+        updateTimer(); // сразу обновить отображение
+        return true;
+    }
+
+    // Инициализация: читаем параметры URL, либо сбрасываем на дефолт
+    function initFromURL() {
+        const { dateStr, title } = getQueryParams();
+        let parsedDate = null;
+        if (dateStr) {
+            parsedDate = parseDateFromString(dateStr);
+        }
+        if (parsedDate && isValidDate(parsedDate) && parsedDate.getTime() > Date.now() - 86400000) {
+            // можно установить даже дату в прошлом, но таймер покажет 00, но лучше ограничим
+            targetDate = parsedDate;
+        } else if (dateStr) {
+            // если ссылка с невалидной датой — используем дефолт +7 дней
+            targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 7);
+            targetDate.setHours(23,59,59,0);
+        } else {
+            // нет параметра — задаём через 7 дней
+            targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 7);
+            targetDate.setHours(23,59,59,0);
+        }
+
+        if (title && title.trim() !== "") {
+            currentEventTitle = decodeURIComponent(title);
+        } else {
+            currentEventTitle = null;
+        }
+
+        // обновить input datetime-local
+        const inputElem = document.getElementById('targetDateInput');
+        if (inputElem && targetDate) {
+            let year = targetDate.getFullYear();
+            let month = String(targetDate.getMonth() + 1).padStart(2,'0');
+            let day = String(targetDate.getDate()).padStart(2,'0');
+            let hours = String(targetDate.getHours()).padStart(2,'0');
+            let minutes = String(targetDate.getMinutes()).padStart(2,'0');
+            let seconds = String(targetDate.getSeconds()).padStart(2,'0');
+            inputElem.value = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        }
+
+        const eventNameDiv = document.getElementById('eventNameDisplay');
+        if (currentEventTitle && currentEventTitle !== "") {
+            eventNameDiv.innerText = currentEventTitle;
+        } else {
+            eventNameDiv.innerText = "До события осталось";
+        }
+
+        updateURLParameters(); // гарантировать корректную ссылку
+        updateTimer();
+    }
+
+    // установка даты из input + обновление ссылки + возможно название
+    function setFromInput() {
+        const inputVal = document.getElementById('targetDateInput').value;
+        if (!inputVal) {
+            alert("Пожалуйста, выберите дату и время");
+            return;
+        }
+        let newDate = parseDateFromString(inputVal);
+        if (!newDate || isNaN(newDate.getTime())) {
+            alert("Ошибка: неверный формат даты");
+            return;
+        }
+        // можно добавить опционально запрос названия события
+        let titleInput = prompt("Введите название события (необязательно):", currentEventTitle || "");
+        let newTitle = (titleInput && titleInput.trim() !== "") ? titleInput.trim() : null;
+        setNewTargetDate(newDate, newTitle);
+    }
+
+    // Копирование текущей ссылки
+    function copyShareLink() {
+        const currentUrl = window.location.href;
+        navigator.clipboard.writeText(currentUrl).then(() => {
+            const toast = document.getElementById('copyToast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 2000);
+        }).catch(() => {
+            alert("Не удалось скопировать ссылку. Скопируйте вручную: " + currentUrl);
+        });
+    }
+
+    // Запуск интервала
+    let intervalId = null;
+    function startTimerUpdate() {
+        if (intervalId) clearInterval(intervalId);
+        updateTimer();
+        intervalId = setInterval(updateTimer, 1000);
+    }
+
+    // Дополнительно: при изменении параметров вручную (кнопки)
+    document.addEventListener('DOMContentLoaded', () => {
+        initFromURL();
+        startTimerUpdate();
+
+        const setBtn = document.getElementById('setDateBtn');
+        const copyBtn = document.getElementById('copyLinkBtn');
+        if (setBtn) setBtn.addEventListener('click', setFromInput);
+        if (copyBtn) copyBtn.addEventListener('click', copyShareLink);
+
+        // если пользователь меняет input вручную, не обновляем URL пока не нажмёт "установить"
+        // так правильнее
+    });
+</script>
+</body>
+</html>
