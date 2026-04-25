@@ -1,1 +1,612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordformation Intensive | Интенсив по словообразованию</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background: linear-gradient(135deg, #0a0f1c 0%, #0f172a 50%, #1e1b3a 100%);
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+            padding: 0 20px 60px;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 50px 0 30px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #FFB347, #FF6B6B, #C084FC);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+        }
+
+        .intensive-badge {
+            display: inline-block;
+            background: rgba(192, 132, 252, 0.2);
+            border: 1px solid #c084fc;
+            border-radius: 40px;
+            padding: 5px 20px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+
+        /* Навигация по разделам */
+        .nav-sections {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0 40px;
+        }
+
+        .nav-btn {
+            background: #1e293b;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            color: #cbd5e6;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.active {
+            background: #8b5cf6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+        }
+
+        .nav-btn:hover:not(.active) {
+            background: #334155;
+        }
+
+        /* Секции */
+        .section {
+            display: none;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 48px;
+            padding: 35px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #f0e6ff;
+            border-left: 5px solid #8b5cf6;
+            padding-left: 20px;
+        }
+
+        .theory-card {
+            background: #0f172a;
+            border-radius: 32px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+
+        .theory-card h3 {
+            color: #c084fc;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .rule-example {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .suffix-list, .prefix-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .suffix-item, .prefix-item {
+            background: #1e293b;
+            padding: 10px 15px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+
+        .suffix-item strong, .prefix-item strong {
+            color: #fbbf24;
+        }
+
+        /* Задания */
+        .task {
+            background: #0f172a;
+            border-radius: 32px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #8b5cf6;
+        }
+
+        .task-number {
+            font-size: 0.9rem;
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+
+        .task-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .task-input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .task-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .check-btn {
+            background: #3b82f6;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 12px;
+        }
+
+        .check-btn:hover {
+            background: #2563eb;
+        }
+
+        .task-feedback {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .task-feedback.correct {
+            background: #15803d30;
+            color: #86efac;
+            border-left: 3px solid #22c55e;
+        }
+
+        .task-feedback.wrong {
+            background: #b91c1c30;
+            color: #fca5a5;
+            border-left: 3px solid #ef4444;
+        }
+
+        .task-feedback.show {
+            padding: 10px 15px;
+        }
+
+        /* Прогресс */
+        .progress-section {
+            background: #0f172a;
+            border-radius: 40px;
+            padding: 20px 30px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            height: 10px;
+            background: #334155;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #c084fc);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-weight: bold;
+            color: #c084fc;
+        }
+
+        .reset-progress {
+            background: #334155;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            color: #f1f5f9;
+            cursor: pointer;
+        }
+
+        /* Всплывающее уведомление */
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            border: 1px solid #8b5cf6;
+            padding: 12px 24px;
+            border-radius: 50px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 100;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: #5b6e8c;
+        }
+
+        @media (max-width: 700px) {
+            .section { padding: 20px; }
+            h2 { font-size: 1.4rem; }
+            .header h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📖 WORDFORMATION INTENSIVE</h1>
+        <p>Мастер-класс по словообразованию: суффиксы, префиксы, части речи</p>
+        <div class="intensive-badge">⚡ Интенсив | Только автор меняет теорию и задания</div>
+    </div>
+
+    <div class="nav-sections" id="navButtons">
+        <button class="nav-btn active" data-section="theory">📚 Теория</button>
+        <button class="nav-btn" data-section="tasks">✍️ Задания</button>
+        <button class="nav-btn" data-section="answers">🔑 Ответы & Пояснения</button>
+    </div>
+
+    <!-- ========= РАЗДЕЛ: ТЕОРИЯ ========= -->
+    <div id="theory" class="section active">
+        <h2>📘 Основы словообразования</h2>
+        
+        <div class="theory-card">
+            <h3>🔹 Суффиксы существительных</h3>
+            <div class="suffix-list">
+                <div class="suffix-item"><strong>-tion/-sion</strong> : educate → education</div>
+                <div class="suffix-item"><strong>-ment</strong> : develop → development</div>
+                <div class="suffix-item"><strong>-ness</strong> : happy → happiness</div>
+                <div class="suffix-item"><strong>-ity/-ty</strong> : active → activity</div>
+                <div class="suffix-item"><strong>-ence/-ance</strong> : different → difference</div>
+                <div class="suffix-item"><strong>-er/-or</strong> : teach → teacher</div>
+            </div>
+        </div>
+
+        <div class="theory-card">
+            <h3>🔸 Суффиксы прилагательных</h3>
+            <div class="suffix-list">
+                <div class="suffix-item"><strong>-able/-ible</strong> : comfort → comfortable</div>
+                <div class="suffix-item"><strong>-ful</strong> : wonder → wonderful</div>
+                <div class="suffix-item"><strong>-less</strong> : hope → hopeless</div>
+                <div class="suffix-item"><strong>-ive</strong> : create → creative</div>
+                <div class="suffix-item"><strong>-al</strong> : nature → natural</div>
+                <div class="suffix-item"><strong>-ous</strong> : danger → dangerous</div>
+            </div>
+        </div>
+
+        <div class="theory-card">
+            <h3>🔹 Префиксы с отрицательным значением</h3>
+            <div class="prefix-list">
+                <div class="prefix-item"><strong>un-</strong> : happy → unhappy</div>
+                <div class="prefix-item"><strong>in-/im-/ir-/il-</strong> : possible → impossible</div>
+                <div class="prefix-item"><strong>dis-</strong> : appear → disappear</div>
+                <div class="prefix-item"><strong>non-</strong> : fiction → non-fiction</div>
+                <div class="prefix-item"><strong>mis-</strong> : understand → misunderstand</div>
+            </div>
+        </div>
+
+        <div class="theory-card">
+            <h3>🔸 Глагольные суффиксы и префиксы</h3>
+            <div class="suffix-list">
+                <div class="suffix-item"><strong>-ize/-ise</strong> : modern → modernize</div>
+                <div class="suffix-item"><strong>-en</strong> : wide → widen</div>
+                <div class="suffix-item"><strong>re-</strong> : write → rewrite</div>
+                <div class="suffix-item"><strong>over-</strong> : load → overload</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========= РАЗДЕЛ: ЗАДАНИЯ ========= -->
+    <div id="tasks" class="section">
+        <h2>✍️ Тренировочные задания</h2>
+        <div id="tasksContainer"></div>
+        
+        <div class="progress-section">
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Выполнено: 0 / 0</div>
+            <button class="reset-progress" id="resetProgressBtn">🔄 Сбросить прогресс</button>
+        </div>
+    </div>
+
+    <!-- ========= РАЗДЕЛ: ОТВЕТЫ И ПОЯСНЕНИЯ ========= -->
+    <div id="answers" class="section">
+        <h2>🔑 Ключи и разбор заданий</h2>
+        <div id="answersContainer"></div>
+    </div>
+    
+    <footer>🔒 Редактировать теорию и задания можете только вы. Ученики только выполняют упражнения.</footer>
+</div>
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<script>
+    // --------------------------------------------------------------
+    //   БАЗА ЗАДАНИЙ (ТОЛЬКО РЕДАКТИРУЕТ АВТОР - ЗДЕСЬ)
+    //   Вы можете менять, добавлять, удалять любые задания.
+    // --------------------------------------------------------------
+    const TASKS = [
+        {
+            id: 1,
+            text: "The ____________ of the new app was a big success. (DEVELOP)",
+            correctAnswer: "development",
+            explanation: "Глагол develop → существительное development (суффикс -ment)"
+        },
+        {
+            id: 2,
+            text: "She is very ____________ and always helps others. (CARE)",
+            correctAnswer: "caring",
+            explanation: "caring — от глагола care, суффикс -ing даёт прилагательное со значением 'заботливый'."
+        },
+        {
+            id: 3,
+            text: "It was ____________ to finish the marathon, but he did it. (POSSIBLE)",
+            correctAnswer: "impossible",
+            explanation: "Префикс im- + possible → impossible (невозможно)"
+        },
+        {
+            id: 4,
+            text: "His ____________ made everyone laugh. (HAPPY)",
+            correctAnswer: "happiness",
+            explanation: "happy → happiness (суффикс -ness образует абстрактное существительное)"
+        },
+        {
+            id: 5,
+            text: "The____________ of the rainforest is a global problem. (DESTROY)",
+            correctAnswer: "destruction",
+            explanation: "destroy → destruction (-tion) – существительное"
+        },
+        {
+            id: 6,
+            text: "This town is ____________ for its beautiful sunsets. (FAME)",
+            correctAnswer: "famous",
+            explanation: "fame → famous (суффикс -ous)"
+        },
+        {
+            id: 7,
+            text: "Don't be so ____________, everything will be fine. (CARE) [отрицательное значение]",
+            correctAnswer: "careless",
+            explanation: "care + less → careless (беззаботный/неосторожный)"
+        }
+    ];
+
+    // --- Сохранение прогресса (LocalStorage) ---
+    let userProgress = JSON.parse(localStorage.getItem("wordformation_progress")) || {};
+
+    function saveProgress() {
+        localStorage.setItem("wordformation_progress", JSON.stringify(userProgress));
+    }
+
+    function isTaskCompleted(taskId) {
+        return userProgress[taskId] === true;
+    }
+
+    function markTaskCompleted(taskId, completed = true) {
+        if (completed) {
+            userProgress[taskId] = true;
+        } else {
+            delete userProgress[taskId];
+        }
+        saveProgress();
+        updateProgressUI();
+    }
+
+    function updateProgressUI() {
+        const total = TASKS.length;
+        let completedCount = 0;
+        TASKS.forEach(task => {
+            if (isTaskCompleted(task.id)) completedCount++;
+        });
+        const percent = total === 0 ? 0 : (completedCount / total) * 100;
+        const fillElem = document.getElementById('progressFill');
+        if (fillElem) fillElem.style.width = percent + "%";
+        const textElem = document.getElementById('progressText');
+        if (textElem) textElem.innerText = `Выполнено: ${completedCount} / ${total}`;
+    }
+
+    // --- Рендер заданий ---
+    function renderTasks() {
+        const container = document.getElementById('tasksContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        TASKS.forEach((task, idx) => {
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task';
+            taskDiv.setAttribute('data-task-id', task.id);
+            
+            const completedFlag = isTaskCompleted(task.id);
+            
+            taskDiv.innerHTML = `
+                <div class="task-number">Задание ${idx+1}</div>
+                <div class="task-text">${task.text}</div>
+                <input type="text" class="task-input" id="input_${task.id}" placeholder="Введите слово..." ${completedFlag ? 'disabled' : ''}>
+                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                    <button class="check-btn" data-id="${task.id}" ${completedFlag ? 'disabled' : ''}>Проверить</button>
+                    ${completedFlag ? '<span style="color:#86efac; margin-left:15px;">✅ Выполнено</span>' : ''}
+                </div>
+                <div class="task-feedback" id="feedback_${task.id}"></div>
+            `;
+            container.appendChild(taskDiv);
+        });
+        
+        // Вешаем обработчики на кнопки "Проверить"
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const taskId = parseInt(btn.getAttribute('data-id'));
+                const task = TASKS.find(t => t.id === taskId);
+                if (!task) return;
+                const inputElem = document.getElementById(`input_${taskId}`);
+                const userAnswer = inputElem.value.trim().toLowerCase();
+                const correct = task.correctAnswer.toLowerCase();
+                const feedbackDiv = document.getElementById(`feedback_${taskId}`);
+                
+                if (userAnswer === correct) {
+                    feedbackDiv.innerHTML = `✅ Правильно! ${task.explanation || ''}`;
+                    feedbackDiv.className = "task-feedback correct show";
+                    if (!isTaskCompleted(task.id)) {
+                        markTaskCompleted(task.id, true);
+                        // Обновить интерфейс: заблокировать поле и кнопку
+                        inputElem.disabled = true;
+                        btn.disabled = true;
+                        // добавить метку выполнено
+                        const parentDiv = btn.closest('.task');
+                        const existingLabel = parentDiv.querySelector('.completed-label');
+                        if (!existingLabel && !parentDiv.querySelector('span[style*="color:#86efac"]')) {
+                            const doneSpan = document.createElement('span');
+                            doneSpan.innerText = ' ✅ Выполнено';
+                            doneSpan.style.color = '#86efac';
+                            doneSpan.style.marginLeft = '15px';
+                            btn.parentNode.appendChild(doneSpan);
+                        }
+                    }
+                    showToast("Верно! +1 балл прогресса");
+                } else {
+                    feedbackDiv.innerHTML = `❌ Неверно. Правильный ответ: ${task.correctAnswer}. ${task.explanation ? 'Пояснение: ' + task.explanation : ''}`;
+                    feedbackDiv.className = "task-feedback wrong show";
+                    showToast("Попробуй ещё раз!");
+                }
+            });
+        });
+    }
+
+    // --- Рендер ответов (раздел с пояснениями)---
+    function renderAnswers() {
+        const container = document.getElementById('answersContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        TASKS.forEach((task, idx) => {
+            const ansCard = document.createElement('div');
+            ansCard.className = 'theory-card';
+            ansCard.style.borderLeft = "4px solid #22c55e";
+            ansCard.innerHTML = `
+                <h3>📌 Задание ${idx+1}</h3>
+                <p style="margin-bottom:10px;"><strong>Вопрос:</strong> ${task.text}</p>
+                <div class="rule-example"><strong>✅ Правильный ответ:</strong> ${task.correctAnswer}</div>
+                <p><strong>📖 Разбор:</strong> ${task.explanation || "Образовано по правилам словообразования."}</p>
+            `;
+            container.appendChild(ansCard);
+        });
+    }
+    
+    // Сброс прогресса
+    function resetProgress() {
+        if (confirm('Сбросить весь прогресс по заданиям? Это не удалит теорию, только отметки "выполнено".')) {
+            userProgress = {};
+            saveProgress();
+            renderTasks();   // перерисовка заданий с активными полями
+            updateProgressUI();
+            showToast("Прогресс сброшен. Все задания можно выполнить заново!");
+        }
+    }
+    
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerText = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => {
+            toast.style.opacity = '0';
+        }, 2000);
+    }
+    
+    // --- Переключение секций ---
+    function initNavigation() {
+        const btns = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-section');
+                sections.forEach(sec => sec.classList.remove('active'));
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const activeSection = document.getElementById(targetId);
+                if (activeSection) activeSection.classList.add('active');
+            });
+        });
+    }
+    
+    // --- Инициализация ---
+    function init() {
+        renderTasks();
+        renderAnswers();
+        updateProgressUI();
+        initNavigation();
+        const resetBtn = document.getElementById('resetProgressBtn');
+        if (resetBtn) resetBtn.addEventListener('click', resetProgress);
+    }
+    
+    init();
+</script>
+</body>
+</html>
